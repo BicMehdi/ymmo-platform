@@ -60,6 +60,7 @@ export function App() {
   };
 
   const [loadError, setLoadError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const loadProperties = async () => {
     const params = new URLSearchParams();
@@ -101,7 +102,9 @@ export function App() {
   };
 
   const refreshAll = async () => {
+    setLoading(true);
     await Promise.all([loadProperties(), loadOverview()]);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -146,7 +149,9 @@ export function App() {
 
       <div className="grid">
         <AuthPanel token={token} onAuthChange={saveToken} />
-        <PropertyForm onCreated={refreshAll} token={token} />
+        {(currentUser?.role === "agent" || currentUser?.role === "admin") && (
+          <PropertyForm onCreated={refreshAll} token={token} />
+        )}
         <AnalyticsBox overview={overview} onEstimate={estimatePrice} />
         <PropertyFilters filters={filters} setFilters={setFilters} onApply={loadProperties} />
         <LeadsPanel token={token} userRole={currentUser?.role || null} />
@@ -159,7 +164,7 @@ export function App() {
         </section>
       )}
 
-      <PropertyList properties={properties} onOpenDetail={setSelectedPropertyId} />
+      <PropertyList properties={properties} onOpenDetail={setSelectedPropertyId} loading={loading} />
       <ChartsBox />
     </main>
   );

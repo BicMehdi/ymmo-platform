@@ -13,15 +13,35 @@ export function AnalyticsBox({ overview, onEstimate }) {
   return (
     <section className="card">
       <h2>Dashboard</h2>
-      <p>Biens: {overview.properties_count}</p>
-      <p>Demandes: {overview.leads_count}</p>
-      <p>Prix moyen: {overview.avg_price.toLocaleString("fr-FR")} EUR</p>
+      <div className="stat-row">
+        <div className="stat-item">
+          <span className="stat-label">Biens publiés</span>
+          <strong>{overview.properties_count}</strong>
+        </div>
+        <div className="stat-item">
+          <span className="stat-label">Demandes</span>
+          <strong>{overview.leads_count}</strong>
+        </div>
+        <div className="stat-item">
+          <span className="stat-label">Prix moyen</span>
+          <strong>{overview.avg_price.toLocaleString("fr-FR")} €</strong>
+        </div>
+      </div>
 
       <form onSubmit={submit} className="estimate-form">
         <h3>Estimation rapide</h3>
-        <input value={city} onChange={(e) => setCity(e.target.value)} required />
-        <input type="number" value={area} onChange={(e) => setArea(e.target.value)} required />
-        <input type="number" value={rooms} onChange={(e) => setRooms(e.target.value)} required />
+        <div className="field">
+          <label htmlFor="est-city">Ville *</label>
+          <input id="est-city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Ex: Marseille" required />
+        </div>
+        <div className="field">
+          <label htmlFor="est-area">Surface (m²) *</label>
+          <input id="est-area" type="number" value={area} onChange={(e) => setArea(e.target.value)} placeholder="Ex: 60" required />
+        </div>
+        <div className="field">
+          <label htmlFor="est-rooms">Pièces *</label>
+          <input id="est-rooms" type="number" value={rooms} onChange={(e) => setRooms(e.target.value)} placeholder="Ex: 3" required />
+        </div>
         <button type="submit">Estimer</button>
       </form>
     </section>

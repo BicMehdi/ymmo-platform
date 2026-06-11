@@ -175,3 +175,64 @@ button:hover {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
+
+/* Property cards */
+.property-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.property-card:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.09);
+  transform: translateY(-2px);
+}
+
+.property-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.property-card-header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.property-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.6rem;
+}
+
+.property-meta {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.property-price {
+  font-size: 1.05rem;
+  color: var(--primary);
+}
+
+.badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+/* Loading */
+.loading-text {
+  color: #888;
+  font-style: italic;
+}
+
