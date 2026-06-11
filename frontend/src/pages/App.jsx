@@ -4,10 +4,10 @@ import { AnalyticsBox } from "../components/AnalyticsBox";
 import { AuthPanel } from "../components/AuthPanel";
 import { ChartsBox } from "../components/ChartsBox";
 import { LeadsPanel } from "../components/LeadsPanel";
+import { AchatsPanel } from "../components/AchatsPanel";
 import { PropertyFilters } from "../components/PropertyFilters";
 import { PropertyForm } from "../components/PropertyForm";
 import { PropertyList } from "../components/PropertyList";
-import { TransactionsPanel } from "../components/TransactionsPanel";
 import { PropertyDetailPage } from "./PropertyDetailPage";
 import { ReservationPage } from "./ReservationPage";
 
@@ -232,7 +232,7 @@ export function App() {
         <aside className="app-sidebar">
           <AuthPanel token={token} onAuthChange={saveToken} />
           {isAdmin && <AdminPanel token={token} currentUserRole={currentUser?.role} />}
-          {isAdmin && <TransactionsPanel token={token} />}
+          {isAdmin && <AchatsPanel token={token} />}
           {isAgent && <PropertyForm onCreated={refreshAll} token={token} />}
           <AnalyticsBox overview={overview} onEstimate={estimatePrice} estimatedPrice={estimatedPrice} />
           <LeadsPanel token={token} userRole={currentUser?.role || null} />

@@ -129,6 +129,20 @@ class ReservationOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class ReservationDetailOut(BaseModel):
+    id: int
+    user_id: int
+    property_id: int
+    amount: float
+    status: str
+    created_at: datetime
+    user: "UserOut"
+    property: "PropertyOut"
+    transaction: "TransactionOut | None" = None
+
+    model_config = {"from_attributes": True}
+
+
 class PriceEstimateOutput(BaseModel):
     estimated_price: float
     confidence_note: str

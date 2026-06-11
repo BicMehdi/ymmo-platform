@@ -1178,6 +1178,152 @@ input::placeholder { color: var(--text-soft); opacity: 0.7; }
 
 /* Transactions panel */
 .transactions-list { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem; }
+
+/* ═══════════════════════════════════════
+   ACHATS PANEL
+═══════════════════════════════════════ */
+.achats-table-wrap {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  margin-top: 0.5rem;
+}
+
+.achats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.achats-table thead th {
+  background: var(--surface-muted);
+  color: var(--text-soft);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.achats-table tbody td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.achats-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.achats-row {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.achats-row:hover {
+  background: var(--surface-muted);
+}
+
+/* Modal overlay */
+.achat-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.achat-modal {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.achat-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--border);
+  gap: 0.75rem;
+}
+
+.achat-modal-header h3 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.achat-modal-close {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-soft);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.achat-modal-close:hover { background: var(--border); }
+
+.achat-modal-body {
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.achat-section {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  background: var(--surface-muted);
+}
+
+.achat-section-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-soft);
+  margin-bottom: 0.6rem;
+}
+
+.achat-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.5rem 1rem;
+}
+
+.achat-detail-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.achat-modal-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.5rem 1.25rem;
+  border-top: 1px solid var(--border);
+}
 .transaction-item {
   border: 1px solid var(--border);
   border-radius: 14px;
