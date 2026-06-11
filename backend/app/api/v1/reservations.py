@@ -93,10 +93,13 @@ def list_reservations(
 def update_reservation_status(
     reservation_id: int,
     body: dict,
-    current_user: User = Depends(require_roles("admin", "super_admin")),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Admin : valider, annuler, rembourser, marquer vendu."""
+    """Admin/super_admin : accès total. Agent : seulement ses propres biens."""
+    if current_user.role not in ("admin", "super_admin", "agent"):
+        raise HTTPException(status_code=403, detail="Accès refusé")
+
     new_status = body.get("status", "")
     if new_status not in ("confirmed", "cancelled", "refunded", "sold"):
         raise HTTPException(status_code=400, detail="Statut invalide")
@@ -104,6 +107,15 @@ def update_reservation_status(
     reservation = db.get(Reservation, reservation_id)
     if not reservation:
         raise HTTPException(status_code=404, detail="Réservation introuvable")
+
+    # L'agent ne peut agir que sur les réservations de ses propres biens
+    if current_user.role == "agent":
+        prop_check = db.get(Property, reservation.property_id)
+        if not prop_check or prop_check.owner_user_id != current_user.id:
+            raise HTTPException(status_code=403, detail="Vous ne pouvez gérer que les réservations de vos propres biens")
+        # L'agent ne peut que confirmer ou marquer vendu (pas rembourser/annuler)
+        if new_status not in ("confirmed", "sold"):
+            raise HTTPException(status_code=403, detail="L'agent peut seulement confirmer ou marquer vendu")
 
     reservation.status = new_status
 

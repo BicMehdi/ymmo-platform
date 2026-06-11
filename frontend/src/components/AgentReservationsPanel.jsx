@@ -19,8 +19,9 @@ const fmtDate = (d) =>
 export function AgentReservationsPanel({ token }) {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading]           = useState(false);
+  const [actionMsg, setActionMsg]       = useState(null);
 
-  useEffect(() => {
+  const load = () => {
     if (!token) return;
     setLoading(true);
     fetch(`${API_URL}/api/v1/reservations`, {
@@ -30,7 +31,26 @@ export function AgentReservationsPanel({ token }) {
       .then(setReservations)
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [token]);
+  };
+
+  const updateStatus = async (resId, status) => {
+    const res = await fetch(`${API_URL}/api/v1/reservations/${resId}/status`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ status }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      setActionMsg({ type: "error", msg: err.detail || "Action impossible." });
+      return;
+    }
+    const labels = { confirmed: "Réservation confirmée ✅", sold: "Bien marqué vendu 🏠" };
+    setActionMsg({ type: "success", msg: labels[status] || status });
+    load();
+    setTimeout(() => setActionMsg(null), 3000);
+  };
+
+  useEffect(() => { load(); }, [token]);
 
   const totalAcomptes = reservations.reduce((s, r) => s + (r.amount || 0), 0);
 
@@ -64,6 +84,7 @@ export function AgentReservationsPanel({ token }) {
                 <th>Acompte</th>
                 <th>Statut</th>
                 <th>Date</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -80,12 +101,40 @@ export function AgentReservationsPanel({ token }) {
                     <td style={{ fontWeight: 600, fontSize: "0.82rem" }}>{fmt(r.amount)}</td>
                     <td><span className={`badge ${sc.cls}`}>{sc.label}</span></td>
                     <td style={{ fontSize: "0.78rem", color: "var(--text-soft)" }}>{fmtDate(r.created_at)}</td>
+                    <td>
+                      <div style={{ display: "flex", gap: "0.3rem", flexWrap: "wrap" }}>
+                        {r.status !== "confirmed" && r.status !== "sold" && r.status !== "cancelled" && (
+                          <button
+                            type="button"
+                            style={{ height: "26px", fontSize: "0.72rem", padding: "0 0.5rem", borderRadius: "6px", background: "#d4edda", color: "#155724", border: "1px solid #28a745", cursor: "pointer" }}
+                            onClick={() => updateStatus(r.id, "confirmed")}
+                          >
+                            ✅ Confirmer
+                          </button>
+                        )}
+                        {r.status !== "sold" && r.status !== "cancelled" && (
+                          <button
+                            type="button"
+                            style={{ height: "26px", fontSize: "0.72rem", padding: "0 0.5rem", borderRadius: "6px", background: "#fff3cd", color: "#856404", border: "1px solid #ffc107", cursor: "pointer" }}
+                            onClick={() => updateStatus(r.id, "sold")}
+                          >
+                            🏠 Vendu
+                          </button>
+                        )}
+                      </div>
+                    </td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
         </div>
+      )}
+
+      {actionMsg && (
+        <p className={`status-bar ${actionMsg.type === "success" ? "success" : "error"}`} role="alert" style={{ marginTop: "0.75rem" }}>
+          {actionMsg.msg}
+        </p>
       )}
     </section>
   );
