@@ -11,25 +11,23 @@ const ROLE_CONFIG = {
 
 /* Boutons disponibles selon le rôle du connecté */
 function getRoleButtons(u, myRole) {
-  // Super_admin : intouchable par tout le monde sauf lui-même
-  if (u.role === "super_admin") {
-    return <span style={{ fontSize: "0.75rem", color: "var(--text-soft)", fontStyle: "italic" }}>👑 Super Admin protégé</span>;
-  }
-  // Admin : seul super_admin peut le modifier
-  if (u.role === "admin" && myRole !== "super_admin") {
-    return <span style={{ fontSize: "0.75rem", color: "var(--text-soft)", fontStyle: "italic" }}>🔒 Admin protégé</span>;
+  // super_admin : accès total sur tout le monde
+  if (myRole === "super_admin") {
+    const btns = [];
+    if (u.role !== "client")      btns.push({ role: "client",      label: "→ Client",      bg: "var(--surface-muted)", color: "var(--text)",    border: "var(--border)" });
+    if (u.role !== "agent")       btns.push({ role: "agent",       label: "→ Agent",       bg: "#fff3cd",             color: "#856404",         border: "#ffc107" });
+    if (u.role !== "admin")       btns.push({ role: "admin",       label: "→ Admin",       bg: "#f8d7da",             color: "#721c24",         border: "#f5c6cb" });
+    if (u.role !== "super_admin") btns.push({ role: "super_admin", label: "→ Super Admin", bg: "#e8d5f5",             color: "#4a0072",         border: "#b39ddb" });
+    return btns;
   }
 
+  // Admin : ne peut pas toucher aux admins / super_admins
+  if (u.role === "super_admin" || u.role === "admin") {
+    return <span style={{ fontSize: "0.75rem", color: "var(--text-soft)", fontStyle: "italic" }}>🔒 Protégé</span>;
+  }
   const btns = [];
-  // Boutons communs : client ↔ agent
-  if (u.role !== "client")
-    btns.push({ role: "client", label: "→ Client", bg: "var(--surface-muted)", color: "var(--text)", border: "var(--border)" });
-  if (u.role !== "agent")
-    btns.push({ role: "agent", label: "→ Agent", bg: "#fff3cd", color: "#856404", border: "#ffc107" });
-  // Super_admin seulement : peut promouvoir en admin
-  if (myRole === "super_admin" && u.role !== "admin")
-    btns.push({ role: "admin", label: "→ Admin", bg: "#f8d7da", color: "#721c24", border: "#f5c6cb" });
-
+  if (u.role !== "client") btns.push({ role: "client", label: "→ Client", bg: "var(--surface-muted)", color: "var(--text)", border: "var(--border)" });
+  if (u.role !== "agent")  btns.push({ role: "agent",  label: "→ Agent",  bg: "#fff3cd",             color: "#856404",     border: "#ffc107" });
   return btns;
 }
 
@@ -76,7 +74,7 @@ export function AdminPanel({ token, currentUserRole }) {
       <h2>🛡 Gestion des utilisateurs</h2>
       {myRole === "super_admin" && (
         <p style={{ fontSize: "0.8rem", color: "var(--text-soft)", marginBottom: "0.75rem", background: "var(--surface-muted)", padding: "0.5rem 0.75rem", borderRadius: "8px" }}>
-          👑 Vous êtes <strong>Super Admin</strong> — accès total sauf modifier un autre Super Admin.
+          👑 Vous êtes <strong>Super Admin</strong> — accès total, aucune restriction.
         </p>
       )}
       {myRole === "admin" && (
