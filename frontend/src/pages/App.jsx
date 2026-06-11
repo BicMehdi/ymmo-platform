@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { AnalyticsBox } from "../components/AnalyticsBox";
 import { AuthPanel } from "../components/AuthPanel";
+import { ChartsBox } from "../components/ChartsBox";
 import { LeadsPanel } from "../components/LeadsPanel";
 import { PropertyFilters } from "../components/PropertyFilters";
 import { PropertyForm } from "../components/PropertyForm";
@@ -142,6 +143,7 @@ export function App() {
       )}
 
       <PropertyList properties={properties} onOpenDetail={setSelectedPropertyId} />
+      <ChartsBox />
     </main>
   );
 }

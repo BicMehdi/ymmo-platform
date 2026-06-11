@@ -46,44 +46,59 @@ export function AuthPanel({ token, onAuthChange }) {
   };
 
   return (
-    <section className="card">
+    <section className="card" aria-label="Authentification">
       <h2>Authentification</h2>
-      {token ? <p>Session active</p> : <p>Connecte-toi pour publier un bien.</p>}
-      <form onSubmit={submit} className="form-grid">
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Mot de passe"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+      {token ? <p role="status">Session active</p> : <p>Connecte-toi pour publier un bien.</p>}
+      <form onSubmit={submit} className="form-grid" aria-label={mode === "login" ? "Formulaire connexion" : "Formulaire inscription"}>
+        <div className="field">
+          <label htmlFor="auth-email">Email *</label>
+          <input
+            id="auth-email"
+            type="email"
+            placeholder="votre@email.fr"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            aria-required="true"
+            autoComplete="email"
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="auth-password">Mot de passe *</label>
+          <input
+            id="auth-password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            aria-required="true"
+            autoComplete={mode === "login" ? "current-password" : "new-password"}
+          />
+        </div>
         {mode === "register" && (
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="agent">Agent</option>
-            <option value="client">Client</option>
-            <option value="admin">Admin</option>
-          </select>
+          <div className="field">
+            <label htmlFor="auth-role">Rôle</label>
+            <select id="auth-role" value={role} onChange={(e) => setRole(e.target.value)}>
+              <option value="agent">Agent</option>
+              <option value="client">Client</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
         )}
         <button type="submit">{mode === "login" ? "Se connecter" : "S'inscrire"}</button>
       </form>
 
-      <div className="inline-actions">
-        <button type="button" onClick={() => setMode("login")}>Mode connexion</button>
-        <button type="button" onClick={() => setMode("register")}>Mode inscription</button>
+      <div className="inline-actions" role="group" aria-label="Changer de mode">
+        <button type="button" onClick={() => setMode("login")} aria-pressed={mode === "login"}>Connexion</button>
+        <button type="button" onClick={() => setMode("register")} aria-pressed={mode === "register"}>Inscription</button>
         {token && (
           <button type="button" onClick={() => onAuthChange("")}>
-            Se deconnecter
+            Se déconnecter
           </button>
         )}
       </div>
-      {status && <p>{status}</p>}
+      {status && <p role="alert">{status}</p>}
     </section>
   );
 }

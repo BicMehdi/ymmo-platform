@@ -16,6 +16,17 @@ class PropertyCreate(PropertyBase):
     rooms: int = Field(default=1, ge=1)
 
 
+class PropertyUpdate(BaseModel):
+    title: str | None = Field(default=None, min_length=3, max_length=120)
+    city: str | None = Field(default=None, min_length=2, max_length=80)
+    price: float | None = Field(default=None, gt=0)
+    area_m2: float | None = Field(default=None, gt=0)
+    property_type: str | None = Field(default=None, min_length=2, max_length=50)
+    description: str | None = Field(default=None, max_length=1000)
+    rooms: int | None = Field(default=None, ge=1)
+    status: str | None = Field(default=None, pattern="^(draft|published|sold)$")
+
+
 class PropertyOut(PropertyBase):
     id: int
     description: str

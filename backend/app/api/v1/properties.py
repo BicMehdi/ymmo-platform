@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.api.v1.auth import require_roles
 from app.db import get_db
 from app.models.db_models import Property, User
-from app.models.schemas import PropertyCreate, PropertyOut
+from app.models.schemas import PropertyCreate, PropertyOut, PropertyUpdate
 
 router = APIRouter(prefix="/properties", tags=["properties"])
 
@@ -62,6 +62,25 @@ def create_property(
     db.commit()
     db.refresh(new_item)
     return new_item
+
+
+@router.put("/{property_id}", response_model=PropertyOut)
+def update_property(
+    property_id: int,
+    payload: PropertyUpdate,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_roles("admin", "agent")),
+) -> Property:
+    item = db.get(Property, property_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Property not found")
+
+    for field, value in payload.model_dump(exclude_none=True).items():
+        setattr(item, field, value)
+
+    db.commit()
+    db.refresh(item)
+    return item
 
 
 @router.delete("/{property_id}", status_code=204)
