@@ -74,11 +74,10 @@ function SimilarCard({ item, onNavigate }) {
 }
 
 /* ── Page principale ─────────────────────────────────────────── */
-export function PropertyDetailPage({ propertyId, token, userRole, onBack, onNavigate }) {
+export function PropertyDetailPage({ propertyId, token, userRole, onBack, onNavigate, favoriteIds = new Set(), onToggleFavorite }) {
   const [property, setProperty]     = useState(null);
   const [loading, setLoading]       = useState(true);
   const [activeImg, setActiveImg]   = useState(0);
-  const [favorite, setFavorite]     = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [leadMessage, setLeadMessage]   = useState("");
   const [leadStatus, setLeadStatus]     = useState(null);
@@ -87,6 +86,8 @@ export function PropertyDetailPage({ propertyId, token, userRole, onBack, onNavi
   const [editData, setEditData]     = useState({});
   const [actionStatus, setActionStatus] = useState(null);
   const [deleting, setDeleting]     = useState(false);
+
+  const isFavorite = favoriteIds.has(propertyId);
 
   useEffect(() => {
     setLoading(true);
@@ -333,10 +334,10 @@ export function PropertyDetailPage({ propertyId, token, userRole, onBack, onNavi
             <div className="detail-actions-btns">
               <button
                 type="button"
-                className={`btn-secondary detail-action-btn${favorite ? " fav-on" : ""}`}
-                onClick={() => setFavorite(!favorite)}
+                className={`btn-secondary detail-action-btn${isFavorite ? " fav-on" : ""}`}
+                onClick={() => onToggleFavorite && onToggleFavorite(propertyId)}
               >
-                {favorite ? "❤️ Dans mes favoris" : "🤍 Ajouter aux favoris"}
+                {isFavorite ? "❤️ Dans mes favoris" : "🤍 Ajouter aux favoris"}
               </button>
               <button
                 type="button"

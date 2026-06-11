@@ -4,10 +4,11 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.api.v1.auth import router as auth_router
+from app.api.v1.favorites import router as favorites_router
 from app.api.v1.leads import router as leads_router
 from app.api.v1.properties import router as properties_router
 from app.db import Base, engine, get_db
-from app.models.db_models import Lead, Property  # noqa: F401
+from app.models.db_models import Favorite, Lead, Property, User  # noqa: F401
 from app.models.schemas import PriceEstimateInput, PriceEstimateOutput
 from app.services.analytics import (
     avg_price_by_city,
@@ -33,17 +34,20 @@ app.add_middleware(
 app.include_router(properties_router, prefix="/api/v1")
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(leads_router, prefix="/api/v1")
+app.include_router(favorites_router, prefix="/api/v1")
 
 
 @app.get("/api/v1/analytics/overview")
 def analytics_overview(db: Session = Depends(get_db)) -> dict:
     properties_count = db.scalar(select(func.count(Property.id))) or 0
     leads_count = db.scalar(select(func.count(Lead.id))) or 0
+    users_count = db.scalar(select(func.count(User.id))) or 0
     avg_price = db.scalar(select(func.avg(Property.price)))
 
     return {
         "properties_count": properties_count,
         "leads_count": leads_count,
+        "users_count": users_count,
         "avg_price": round(float(avg_price), 2) if avg_price is not None else 0,
     }
 

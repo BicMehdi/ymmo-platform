@@ -436,7 +436,7 @@ input::placeholder { color: var(--text-soft); opacity: 0.7; }
 ═══════════════════════════════════════ */
 .kpi-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: 0.75rem;
   margin-bottom: 1rem;
 }

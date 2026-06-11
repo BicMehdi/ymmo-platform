@@ -83,6 +83,16 @@ class LeadOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class FavoriteOut(BaseModel):
+    id: int
+    property_id: int
+    user_id: int
+    created_at: datetime
+    property: "PropertyOut | None" = None
+
+    model_config = {"from_attributes": True}
+
+
 class PriceEstimateInput(BaseModel):
     city: str
     area_m2: float = Field(gt=0)

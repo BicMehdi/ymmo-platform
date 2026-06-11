@@ -14,13 +14,14 @@ const API_URL = "http://localhost:8000";
 export function App() {
   const [token, setToken] = useState(localStorage.getItem("ymmo_token") || "");
   const [properties, setProperties] = useState([]);
-  const [overview, setOverview] = useState({ properties_count: 0, leads_count: 0, avg_price: 0 });
+  const [overview, setOverview] = useState({ properties_count: 0, leads_count: 0, users_count: 0, avg_price: 0 });
   const [estimatedPrice, setEstimatedPrice] = useState(null);
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [filters, setFilters] = useState({ city: "", property_type: "", min_price: "", max_price: "", min_area: "", max_area: "", rooms: "" });
   const [loadError, setLoadError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [favoriteIds, setFavoriteIds] = useState(new Set());
 
   const saveToken = (value) => {
     setToken(value);
@@ -28,10 +29,31 @@ export function App() {
   };
 
   const loadCurrentUser = async () => {
-    if (!token) { setCurrentUser(null); return; }
+    if (!token) { setCurrentUser(null); setFavoriteIds(new Set()); return; }
     const res = await fetch(`${API_URL}/api/v1/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
-    if (!res.ok) { setCurrentUser(null); return; }
+    if (!res.ok) { setCurrentUser(null); setFavoriteIds(new Set()); return; }
     setCurrentUser(await res.json());
+  };
+
+  const loadFavorites = async () => {
+    if (!token) { setFavoriteIds(new Set()); return; }
+    try {
+      const res = await fetch(`${API_URL}/api/v1/favorites`, { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) return;
+      const data = await res.json();
+      setFavoriteIds(new Set(data.map((f) => f.property_id)));
+    } catch (_) {}
+  };
+
+  const toggleFavorite = async (propertyId) => {
+    if (!token) return;
+    if (favoriteIds.has(propertyId)) {
+      await fetch(`${API_URL}/api/v1/favorites/${propertyId}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+      setFavoriteIds((prev) => { const s = new Set(prev); s.delete(propertyId); return s; });
+    } else {
+      const res = await fetch(`${API_URL}/api/v1/favorites/${propertyId}`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+      if (res.ok) setFavoriteIds((prev) => new Set([...prev, propertyId]));
+    }
   };
 
   const loadProperties = async () => {
@@ -69,7 +91,7 @@ export function App() {
   };
 
   useEffect(() => { refreshAll(); }, []);
-  useEffect(() => { loadCurrentUser(); }, [token]);
+  useEffect(() => { loadCurrentUser(); loadFavorites(); }, [token]);
 
   const isAgent = currentUser?.role === "agent" || currentUser?.role === "admin";
 
@@ -96,6 +118,8 @@ export function App() {
             userRole={currentUser?.role || null}
             onBack={() => setSelectedPropertyId(null)}
             onNavigate={(id) => setSelectedPropertyId(id)}
+            favoriteIds={favoriteIds}
+            onToggleFavorite={toggleFavorite}
           />
         </div>
       </>

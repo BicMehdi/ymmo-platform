@@ -45,6 +45,8 @@ class Property(Base):
 
     owner: Mapped[User] = relationship("User", back_populates="properties")
     leads: Mapped[list["Lead"]] = relationship("Lead", back_populates="property")
+    favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="property", cascade="all, delete-orphan")
+    favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="property", cascade="all, delete-orphan")
 
 
 class Lead(Base):
@@ -69,3 +71,15 @@ class Lead(Base):
         back_populates="assigned_leads",
         foreign_keys=[assigned_agent_id],
     )
+
+
+class Favorite(Base):
+    __tablename__ = "favorites"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
+    property_id: Mapped[int] = mapped_column(ForeignKey("properties.id"), nullable=False, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    user: Mapped["User"] = relationship("User")
+    property: Mapped["Property"] = relationship("Property", back_populates="favorites")

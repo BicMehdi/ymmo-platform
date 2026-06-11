@@ -29,7 +29,12 @@ export function AnalyticsBox({ overview, onEstimate, estimatedPrice }) {
           <div className="kpi-label">Biens publiés</div>
         </div>
         <div className="kpi-card">
-          <div className="kpi-icon">📋</div>
+          <div className="kpi-icon">�</div>
+          <div className="kpi-value">{overview.users_count ?? "—"}</div>
+          <div className="kpi-label">Utilisateurs</div>
+        </div>
+        <div className="kpi-card">
+          <div className="kpi-icon">�📋</div>
           <div className="kpi-value">{overview.leads_count}</div>
           <div className="kpi-label">Demandes</div>
         </div>
