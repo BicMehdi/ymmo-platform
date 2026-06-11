@@ -233,7 +233,7 @@ export function App() {
           <AuthPanel token={token} onAuthChange={saveToken} />
           {isAdmin && <AdminPanel token={token} currentUserRole={currentUser?.role} />}
           {isAdmin && <TransactionsPanel token={token} />}
-          {isAgent && <PropertyForm onCreated={refreshAll} token={token} />}}
+          {isAgent && <PropertyForm onCreated={refreshAll} token={token} />}
           <AnalyticsBox overview={overview} onEstimate={estimatePrice} estimatedPrice={estimatedPrice} />
           <LeadsPanel token={token} userRole={currentUser?.role || null} />
         </aside>
