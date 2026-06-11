@@ -1,18 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from sqlalchemy import select
-from sqlalchemy.orm import Session
-
-from app.core.security import create_access_token, decode_token, hash_password, verify_password
-from app.db import get_db
-from app.models.db_models import User
-from app.models.schemas import AuthLogin, AuthRegister, AuthTokenOut, UserOut
-
-router = APIRouter(prefix="/auth", tags=["auth"])
-bearer_scheme = HTTPBearer()
-
-
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -96,20 +82,21 @@ def list_users(user: User = Depends(get_current_user), db: Session = Depends(get
 @router.put("/users/{user_id}/role", response_model=UserOut)
 def update_user_role(
     user_id: int,
-    body: dict,
+    role: str = Body(..., embed=True),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     """Change le rôle d'un utilisateur — admin uniquement."""
     if current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Admin only")
-    new_role = body.get("role", "")
-    if new_role not in ("client", "agent", "admin"):
+    if role not in ("client", "agent", "admin"):
         raise HTTPException(status_code=400, detail="Rôle invalide")
     target = db.scalar(select(User).where(User.id == user_id))
     if not target:
         raise HTTPException(status_code=404, detail="Utilisateur introuvable")
-    target.role = new_role
+    if target.role == "admin":
+        raise HTTPException(status_code=403, detail="Impossible de modifier le rôle d'un admin")
+    target.role = role
     db.commit()
     db.refresh(target)
     return target

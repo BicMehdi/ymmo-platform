@@ -73,23 +73,29 @@ export function AdminPanel({ token }) {
                   <span className={`badge ${rc.cls}`} style={{ alignSelf: "flex-start" }}>{rc.label}</span>
                 </div>
                 <div style={{ display: "flex", gap: "0.35rem", flexWrap: "wrap" }}>
-                  {u.role !== "client" && (
-                    <button type="button" style={{ height: "30px", fontSize: "0.75rem", padding: "0 0.6rem", borderRadius: "7px", background: "var(--surface-muted)", color: "var(--text)", border: "1px solid var(--border)" }}
-                      onClick={() => changeRole(u.id, "client")}>
-                      → Client
-                    </button>
-                  )}
-                  {u.role !== "agent" && (
-                    <button type="button" style={{ height: "30px", fontSize: "0.75rem", padding: "0 0.6rem", borderRadius: "7px", background: "#fff3cd", color: "#856404", border: "1px solid #ffc107" }}
-                      onClick={() => changeRole(u.id, "agent")}>
-                      → Agent
-                    </button>
-                  )}
-                  {u.role !== "admin" && (
-                    <button type="button" style={{ height: "30px", fontSize: "0.75rem", padding: "0 0.6rem", borderRadius: "7px", background: "#f8d7da", color: "#721c24", border: "1px solid #f5c6cb" }}
-                      onClick={() => changeRole(u.id, "admin")}>
-                      → Admin
-                    </button>
+                  {u.role === "admin" ? (
+                    <span style={{ fontSize: "0.75rem", color: "var(--text-soft)", fontStyle: "italic", padding: "0 0.4rem" }}>🔒 Protégé</span>
+                  ) : (
+                    <>
+                      {u.role !== "client" && (
+                        <button type="button" style={{ height: "30px", fontSize: "0.75rem", padding: "0 0.6rem", borderRadius: "7px", background: "var(--surface-muted)", color: "var(--text)", border: "1px solid var(--border)" }}
+                          onClick={() => changeRole(u.id, "client")}>
+                          → Client
+                        </button>
+                      )}
+                      {u.role !== "agent" && (
+                        <button type="button" style={{ height: "30px", fontSize: "0.75rem", padding: "0 0.6rem", borderRadius: "7px", background: "#fff3cd", color: "#856404", border: "1px solid #ffc107" }}
+                          onClick={() => changeRole(u.id, "agent")}>
+                          → Agent
+                        </button>
+                      )}
+                      {u.role !== "admin" && (
+                        <button type="button" style={{ height: "30px", fontSize: "0.75rem", padding: "0 0.6rem", borderRadius: "7px", background: "#f8d7da", color: "#721c24", border: "1px solid #f5c6cb" }}
+                          onClick={() => changeRole(u.id, "admin")}>
+                          → Admin
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               </li>
