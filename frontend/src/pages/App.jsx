@@ -95,6 +95,7 @@ export function App() {
             token={token}
             userRole={currentUser?.role || null}
             onBack={() => setSelectedPropertyId(null)}
+            onNavigate={(id) => setSelectedPropertyId(id)}
           />
         </div>
       </>
