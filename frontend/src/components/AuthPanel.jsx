@@ -22,7 +22,8 @@ export function AuthPanel({ token, onAuthChange }) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password, role }),
         });
-        if (!res.ok) { setStatus({ type: "error", msg: "Inscription échouée. Email déjà utilisé." }); return; }
+          if (res.status === 400) { setStatus({ type: "error", msg: "Email déjà utilisé. Essayez un autre." }); return; }
+          if (!res.ok) { setStatus({ type: "error", msg: "Inscription échouée (vérifiez : mot de passe min. 8 caractères)." }); return; }
         setStatus({ type: "success", msg: "Inscription réussie ✓ Connectez-vous." });
         setMode("login");
         return;
@@ -69,17 +70,12 @@ export function AuthPanel({ token, onAuthChange }) {
         </div>
         <div className="field">
           <label htmlFor="auth-password">Mot de passe</label>
-          <input id="auth-password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete={mode === "login" ? "current-password" : "new-password"} />
+          <input id="auth-password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={mode === "register" ? 8 : undefined} autoComplete={mode === "login" ? "current-password" : "new-password"} />
         </div>
         {mode === "register" && (
-          <div className="field">
-            <label htmlFor="auth-role">Rôle</label>
-            <select id="auth-role" value={role} onChange={(e) => setRole(e.target.value)}>
-              <option value="agent">Agent</option>
-              <option value="client">Client</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
+          <p style={{ fontSize: "0.82rem", color: "var(--text-soft)", background: "var(--surface-muted)", padding: "0.6rem 0.8rem", borderRadius: "8px" }}>
+            ℹ️ Tout nouveau compte est créé en tant que <strong>Client</strong>. Un admin peut ensuite vous attribuer le rôle Agent.
+          </p>
         )}
         <button type="submit" className="btn-primary" style={{ width: "100%" }} disabled={loading}>
           {loading

@@ -55,6 +55,14 @@ def seed() -> None:
             print("Base déjà seedée. Supprime ymmo.db pour recommencer.")
             return
 
+        # Admin principal
+        admin = User(
+            email="admin@ymmo.fr",
+            password_hash=hash_password("Admin123!"),
+            role="admin",
+        )
+        db.add(admin)
+
         # Agent demo
         agent = User(
             email="agent@ymmo.fr",
@@ -85,7 +93,7 @@ def seed() -> None:
             db.add(prop)
 
         db.commit()
-        print("Seed OK: 20 biens + agent@ymmo.fr + client@ymmo.fr (mot de passe: ymmo1234)")
+        print("Seed OK: 20 biens + admin@ymmo.fr (Admin123!) + agent@ymmo.fr + client@ymmo.fr (ymmo1234)")
     finally:
         db.close()
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { AdminPanel } from "../components/AdminPanel";
 import { AnalyticsBox } from "../components/AnalyticsBox";
 import { AuthPanel } from "../components/AuthPanel";
 import { ChartsBox } from "../components/ChartsBox";
@@ -172,6 +173,7 @@ export function App() {
         {/* Sidebar */}
         <aside className="app-sidebar">
           <AuthPanel token={token} onAuthChange={saveToken} />
+          {currentUser?.role === "admin" && <AdminPanel token={token} />}
           {isAgent && <PropertyForm onCreated={refreshAll} token={token} />}
           <AnalyticsBox overview={overview} onEstimate={estimatePrice} estimatedPrice={estimatedPrice} />
           <LeadsPanel token={token} userRole={currentUser?.role || null} />
