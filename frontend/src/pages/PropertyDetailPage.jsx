@@ -74,7 +74,7 @@ function SimilarCard({ item, onNavigate }) {
 }
 
 /* ── Page principale ─────────────────────────────────────────── */
-export function PropertyDetailPage({ propertyId, token, userRole, onBack, onNavigate, favoriteIds = new Set(), onToggleFavorite, onReserve }) {
+export function PropertyDetailPage({ propertyId, token, userRole, currentUserId, onBack, onNavigate, favoriteIds = new Set(), onToggleFavorite, onReserve }) {
   const [property, setProperty]     = useState(null);
   const [loading, setLoading]       = useState(true);
   const [activeImg, setActiveImg]   = useState(0);
@@ -268,9 +268,9 @@ export function PropertyDetailPage({ propertyId, token, userRole, onBack, onNavi
           </section>
 
           {/* Admin : modifier / supprimer */}
-          {(userRole === "admin" || userRole === "super_admin") && (
+          {(userRole === "admin" || userRole === "super_admin" || (userRole === "agent" && property.owner_user_id === currentUserId)) && (
             <section className="card detail-admin-card">
-              <h2>⚙️ Administration</h2>
+              <h2>{userRole === "agent" ? "✏️ Mon annonce" : "⚙️ Administration"}</h2>
               <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
                 <button className="btn-secondary" onClick={() => { setShowEdit(!showEdit); setActionStatus(null); }}>
                   {showEdit ? "✕ Annuler" : "✏️ Modifier ce bien"}

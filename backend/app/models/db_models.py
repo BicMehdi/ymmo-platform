@@ -13,6 +13,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[str] = mapped_column(String(20), nullable=False, default="client")
+    is_active: Mapped[bool] = mapped_column(Integer, nullable=False, default=True, server_default="1")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     properties: Mapped[list["Property"]] = relationship("Property", back_populates="owner")

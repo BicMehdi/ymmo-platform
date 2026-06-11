@@ -76,7 +76,15 @@ def list_reservations(
         )
         .order_by(Reservation.id.desc())
     )
-    if current_user.role not in ("admin", "super_admin"):
+    if current_user.role in ("admin", "super_admin"):
+        pass  # tout voir
+    elif current_user.role == "agent":
+        # L'agent voit les réservations sur ses propres biens
+        from app.models.db_models import Property as Prop
+        owned_ids = db.scalars(select(Prop.id).where(Prop.owner_user_id == current_user.id)).all()
+        query = query.where(Reservation.property_id.in_(owned_ids))
+    else:
+        # Client : seulement ses propres réservations
         query = query.where(Reservation.user_id == current_user.id)
     return list(db.scalars(query).all())
 

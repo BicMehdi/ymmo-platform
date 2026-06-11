@@ -71,6 +71,22 @@ export function AdminPanel({ token, currentUserRole }) {
     await loadUsers();
   };
 
+  const toggleActive = async (userId) => {
+    setMessage(null);
+    const res = await fetch(`${API_URL}/api/v1/auth/users/${userId}/active`, {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setMessage({ type: "error", msg: data.detail || "Action impossible." });
+      return;
+    }
+    const updated = await res.json();
+    setMessage({ type: "success", msg: updated.is_active ? "✅ Compte réactivé" : "⛔ Compte désactivé" });
+    await loadUsers();
+  };
+
   useEffect(() => { loadUsers(); }, [token]);
 
   const myRole = currentUserRole;
@@ -131,10 +147,13 @@ export function AdminPanel({ token, currentUserRole }) {
                 {/* Ligne principale : email + rôle + boutons */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.5rem", flexWrap: "wrap" }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.1rem", flex: 1, minWidth: 0 }}>
-                    <span style={{ fontSize: "0.88rem", fontWeight: 600, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <span style={{ fontSize: "0.88rem", fontWeight: 600, color: u.is_active ? "var(--text)" : "var(--text-soft)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textDecoration: u.is_active ? "none" : "line-through" }}>
                       {u.email}
                     </span>
-                    <span className={`badge ${rc.cls}`} style={{ alignSelf: "flex-start" }}>{rc.label}</span>
+                    <div style={{ display: "flex", gap: "0.3rem", flexWrap: "wrap" }}>
+                      <span className={`badge ${rc.cls}`} style={{ alignSelf: "flex-start" }}>{rc.label}</span>
+                      {!u.is_active && <span className="badge badge-muted" style={{ alignSelf: "flex-start" }}>⛔ Désactivé</span>}
+                    </div>
                   </div>
                   <div style={{ display: "flex", gap: "0.35rem", flexWrap: "wrap", alignItems: "center" }}>
                     {Array.isArray(btns) ? btns.map((b) => (
@@ -146,6 +165,26 @@ export function AdminPanel({ token, currentUserRole }) {
                         {b.label}
                       </button>
                     )) : btns}
+                    {/* Bouton désactiver / réactiver */}
+                    {u.is_active ? (
+                      <button
+                        type="button"
+                        title="Désactiver ce compte"
+                        style={{ height: "30px", fontSize: "0.75rem", padding: "0 0.6rem", borderRadius: "7px", background: "#fff3cd", color: "#856404", border: "1px solid #ffc107", cursor: "pointer" }}
+                        onClick={() => toggleActive(u.id)}
+                      >
+                        ⛔ Désactiver
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        title="Réactiver ce compte"
+                        style={{ height: "30px", fontSize: "0.75rem", padding: "0 0.6rem", borderRadius: "7px", background: "#d4edda", color: "#155724", border: "1px solid #28a745", cursor: "pointer" }}
+                        onClick={() => toggleActive(u.id)}
+                      >
+                        ✅ Réactiver
+                      </button>
+                    )}
                   </div>
                 </div>
 

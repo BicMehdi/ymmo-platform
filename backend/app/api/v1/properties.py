@@ -74,11 +74,14 @@ def update_property(
     property_id: int,
     payload: PropertyUpdate,
     db: Session = Depends(get_db),
-    user: User = Depends(require_roles("admin", "agent")),
+    user: User = Depends(require_roles("admin", "agent", "super_admin")),
 ) -> Property:
     item = db.get(Property, property_id)
     if not item:
         raise HTTPException(status_code=404, detail="Property not found")
+    # Les agents ne peuvent modifier que leurs propres biens
+    if user.role == "agent" and item.owner_user_id != user.id:
+        raise HTTPException(status_code=403, detail="Vous ne pouvez modifier que vos propres biens")
 
     for field, value in payload.model_dump(exclude_none=True).items():
         setattr(item, field, value)
@@ -92,11 +95,13 @@ def update_property(
 def delete_property(
     property_id: int,
     db: Session = Depends(get_db),
-    _: User = Depends(require_roles("admin", "agent")),
+    user: User = Depends(require_roles("admin", "agent", "super_admin")),
 ) -> None:
     item = db.get(Property, property_id)
-    if item:
-        db.delete(item)
-        db.commit()
-        return
-    raise HTTPException(status_code=404, detail="Property not found")
+    if not item:
+        raise HTTPException(status_code=404, detail="Property not found")
+    # Les agents ne peuvent supprimer que leurs propres biens
+    if user.role == "agent" and item.owner_user_id != user.id:
+        raise HTTPException(status_code=403, detail="Vous ne pouvez supprimer que vos propres biens")
+    db.delete(item)
+    db.commit()

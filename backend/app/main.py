@@ -1,6 +1,6 @@
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import func, select
+from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
 from app.api.v1.auth import router as auth_router
@@ -23,6 +23,13 @@ from app.services.analytics import (
 app = FastAPI(title="Ymmo DEV API", version="0.1.0")
 
 Base.metadata.create_all(bind=engine)
+
+# Migration manuelle : ajouter is_active si la colonne n'existe pas encore (SQLite)
+with engine.connect() as conn:
+    cols = [row[1] for row in conn.execute(text("PRAGMA table_info(users)")).fetchall()]
+    if "is_active" not in cols:
+        conn.execute(text("ALTER TABLE users ADD COLUMN is_active INTEGER NOT NULL DEFAULT 1"))
+        conn.commit()
 
 app.add_middleware(
     CORSMiddleware,

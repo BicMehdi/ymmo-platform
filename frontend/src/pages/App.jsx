@@ -5,6 +5,8 @@ import { AuthPanel } from "../components/AuthPanel";
 import { ChartsBox } from "../components/ChartsBox";
 import { LeadsPanel } from "../components/LeadsPanel";
 import { AchatsPanel } from "../components/AchatsPanel";
+import { AgentReservationsPanel } from "../components/AgentReservationsPanel";
+import { MesAchatsPanel } from "../components/MesAchatsPanel";
 import { PropertyFilters } from "../components/PropertyFilters";
 import { PropertyForm } from "../components/PropertyForm";
 import { PropertyList } from "../components/PropertyList";
@@ -148,6 +150,7 @@ export function App() {
             propertyId={selectedPropertyId}
             token={token}
             userRole={currentUser?.role || null}
+            currentUserId={currentUser?.id || null}
             onBack={() => setSelectedPropertyId(null)}
             onNavigate={(id) => setSelectedPropertyId(id)}
             favoriteIds={favoriteIds}
@@ -233,8 +236,10 @@ export function App() {
           <AuthPanel token={token} onAuthChange={saveToken} />
           {isAdmin && <AdminPanel token={token} currentUserRole={currentUser?.role} />}
           {isAdmin && <AchatsPanel token={token} />}
+          {isAgent && !isAdmin && <AgentReservationsPanel token={token} />}
           {isAgent && <PropertyForm onCreated={refreshAll} token={token} />}
           <AnalyticsBox overview={overview} onEstimate={estimatePrice} estimatedPrice={estimatedPrice} />
+          {token && !isAgent && <MesAchatsPanel token={token} onOpenDetail={setSelectedPropertyId} />}
           <LeadsPanel token={token} userRole={currentUser?.role || null} />
         </aside>
 
