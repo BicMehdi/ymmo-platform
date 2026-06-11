@@ -1,52 +1,92 @@
-# Backend - FastAPI + PostgreSQL
+# Backend — FastAPI
 
-## Démarrage local
+API REST du projet Ymmo. SQLite en développement, migrations automatiques au démarrage.
 
-1. Créer un environnement virtuel Python
-2. Installer les dépendances:
-   - pip install -r requirements.txt
-3. Copier .env.example en .env et adapter les valeurs
-4. Lancer l'API:
-   - uvicorn app.main:app --reload
+## Démarrage
 
-## Migrations Alembic
+```bash
+python -m venv .venv
+.venv\Scripts\activate        # Windows
+source .venv/bin/activate     # Linux/Mac
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
 
-1. Créer la base PostgreSQL `ymmo`
-2. Appliquer la migration initiale:
-   - alembic upgrade head
-3. Créer une migration après changement de modèle:
-   - alembic revision --autogenerate -m "message"
+API disponible sur `http://localhost:8000`  
+Swagger UI : `http://localhost:8000/docs`
 
 ## Variables d'environnement
 
-- DATABASE_URL=postgresql+psycopg://postgres:postgres@localhost:5432/ymmo
-- JWT_SECRET=replace-with-a-long-random-secret
-- JWT_EXPIRE_MINUTES=60
+Copier `.env.example` en `.env` :
+
+```
+DATABASE_URL=sqlite:///./ymmo.db
+JWT_SECRET=replace-with-a-long-random-secret
+JWT_EXPIRE_MINUTES=60
+```
+
+## Migrations
+
+Les colonnes manquantes sont ajoutées automatiquement via `ALTER TABLE` au démarrage (`main.py`). Pas besoin de lancer Alembic manuellement en dev.
+
+## Données de démo
+
+```bash
+python seed.py
+```
 
 ## Endpoints principaux
 
-- GET /health
-- POST /api/v1/auth/register
-- POST /api/v1/auth/login
-- GET /api/v1/auth/me
-- GET /api/v1/properties
-- GET /api/v1/properties/{id}
-- POST /api/v1/properties (admin, agent)
-- DELETE /api/v1/properties/{id} (admin, agent)
-- POST /api/v1/leads (client)
-- GET /api/v1/leads/me (client)
-- GET /api/v1/leads/agent (admin, agent)
-- PATCH /api/v1/leads/{id}/status (admin, agent)
-- GET /api/v1/analytics/overview
-- POST /api/v1/analytics/estimate-price
+### Auth
+| Méthode | Route | Accès |
+|---|---|---|
+| POST | `/api/v1/auth/register` | public |
+| POST | `/api/v1/auth/token` | public |
+| GET | `/api/v1/auth/me` | connecté |
+| PUT | `/api/v1/auth/me/password` | connecté |
+| GET | `/api/v1/auth/users` | admin |
+| PUT | `/api/v1/auth/users/{id}/role` | admin/super_admin |
+| PUT | `/api/v1/auth/users/{id}/active` | admin |
 
-## Filtres sur les biens
+### Biens
+| Méthode | Route | Accès |
+|---|---|---|
+| GET | `/api/v1/properties` | public |
+| GET | `/api/v1/properties/{id}` | public |
+| POST | `/api/v1/properties` | agent/admin |
+| PUT | `/api/v1/properties/{id}` | agent (propre bien)/admin |
+| DELETE | `/api/v1/properties/{id}` | agent (propre bien)/admin |
 
-Query params supportés sur GET /api/v1/properties:
+Filtres disponibles : `city`, `property_type`, `min_price`, `max_price`, `min_area`, `max_area`, `status`, `owner_user_id`
 
-- city
-- property_type
-- min_price / max_price
-- min_area / max_area
+### Réservations
+| Méthode | Route | Accès |
+|---|---|---|
+| POST | `/api/v1/reservations` | client |
+| GET | `/api/v1/reservations` | selon rôle |
+| PUT | `/api/v1/reservations/{id}/status` | agent/admin |
+
+Flux : `pending → accepted → sold` (ou `rejected` / `cancelled`)
+
+### Leads
+| Méthode | Route | Accès |
+|---|---|---|
+| POST | `/api/v1/leads` | connecté |
+| GET | `/api/v1/leads/me` | connecté |
+| GET | `/api/v1/leads/agent` | agent/admin |
+| PATCH | `/api/v1/leads/{id}/status` | agent |
+
+### Analytiques
+| Méthode | Route | Accès |
+|---|---|---|
+| GET | `/api/v1/analytics/overview` | admin/agent |
+| POST | `/api/v1/analytics/estimate-price` | connecté |
+
+## Tests
+
+```bash
+pytest tests/
+```
+
 - rooms
 - skip / limit
