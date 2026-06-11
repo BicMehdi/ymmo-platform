@@ -1,0 +1,132 @@
+:root {
+  --bg: #f7f5ef;
+  --text: #1e1e1e;
+  --card: #ffffff;
+  --primary: #1d6b5d;
+  --primary-dark: #12493f;
+  --border: #d8d5cc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at top right, #e7efe8 0%, var(--bg) 45%);
+}
+
+.layout {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.2rem;
+}
+
+.hero {
+  margin-bottom: 1rem;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.hero p {
+  margin-top: 0.3rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+.form-grid,
+.estimate-form {
+  display: grid;
+  gap: 0.6rem;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--primary-dark);
+}
+
+.property-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.property-list li {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.inline-actions button {
+  padding: 0.45rem 0.7rem;
+}
+
+.filters-grid {
+  display: grid;
+  gap: 0.6rem;
+  margin-bottom: 0.7rem;
+}
+
+.card h3 {
+  margin-bottom: 0.35rem;
+}
+
+@media (min-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filters-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
