@@ -7,74 +7,69 @@ export function AuthPanel({ token, onAuthChange }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("agent");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState(null); // { type, msg }
+  const [loading, setLoading] = useState(false);
 
   const submit = async (event) => {
     event.preventDefault();
-    setStatus("");
+    setStatus(null);
+    setLoading(true);
 
-    if (mode === "register") {
-      const response = await fetch(`${API_URL}/api/v1/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, role }),
-      });
-
-      if (!response.ok) {
-        setStatus("Inscription echouee");
+    try {
+      if (mode === "register") {
+        const res = await fetch(`${API_URL}/api/v1/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, role }),
+        });
+        if (!res.ok) { setStatus({ type: "error", msg: "Inscription échouée. Email déjà utilisé." }); return; }
+        setStatus({ type: "success", msg: "Inscription réussie ✓ Connectez-vous." });
+        setMode("login");
         return;
       }
-      setStatus("Inscription reussie, connecte-toi.");
-      setMode("login");
-      return;
+
+      const res = await fetch(`${API_URL}/api/v1/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!res.ok) { setStatus({ type: "error", msg: "Identifiants incorrects." }); return; }
+      const data = await res.json();
+      onAuthChange(data.access_token);
+      setStatus({ type: "success", msg: "Connexion réussie ✓" });
+    } catch (_) {
+      setStatus({ type: "error", msg: "Serveur inaccessible." });
+    } finally {
+      setLoading(false);
     }
-
-    const response = await fetch(`${API_URL}/api/v1/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (!response.ok) {
-      setStatus("Connexion echouee");
-      return;
-    }
-
-    const data = await response.json();
-    onAuthChange(data.access_token);
-    setStatus("Connecte");
   };
+
+  if (token) {
+    return (
+      <section className="card">
+        <h2>Compte</h2>
+        <p role="status" style={{ color: "var(--success)", fontWeight: 600, fontSize: "0.9rem", marginBottom: "0.75rem" }}>
+          ✅ Session active
+        </p>
+        <button type="button" className="btn-secondary" style={{ width: "100%" }} onClick={() => onAuthChange("")}>
+          Se déconnecter
+        </button>
+      </section>
+    );
+  }
 
   return (
     <section className="card" aria-label="Authentification">
-      <h2>Authentification</h2>
-      {token ? <p role="status">Session active</p> : <p>Connecte-toi pour publier un bien.</p>}
+      <h2>{mode === "login" ? "Connexion" : "Créer un compte"}</h2>
+
       <form onSubmit={submit} className="form-grid" aria-label={mode === "login" ? "Formulaire connexion" : "Formulaire inscription"}>
         <div className="field">
-          <label htmlFor="auth-email">Email *</label>
-          <input
-            id="auth-email"
-            type="email"
-            placeholder="votre@email.fr"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            aria-required="true"
-            autoComplete="email"
-          />
+          <label htmlFor="auth-email">Email</label>
+          <input id="auth-email" type="email" placeholder="votre@email.fr" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
         </div>
         <div className="field">
-          <label htmlFor="auth-password">Mot de passe *</label>
-          <input
-            id="auth-password"
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            aria-required="true"
-            autoComplete={mode === "login" ? "current-password" : "new-password"}
-          />
+          <label htmlFor="auth-password">Mot de passe</label>
+          <input id="auth-password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete={mode === "login" ? "current-password" : "new-password"} />
         </div>
         {mode === "register" && (
           <div className="field">
@@ -86,19 +81,23 @@ export function AuthPanel({ token, onAuthChange }) {
             </select>
           </div>
         )}
-        <button type="submit">{mode === "login" ? "Se connecter" : "S'inscrire"}</button>
+        <button type="submit" className="btn-primary" style={{ width: "100%" }} disabled={loading}>
+          {loading
+            ? (mode === "login" ? "Connexion..." : "Inscription...")
+            : (mode === "login" ? "Se connecter" : "S'inscrire")}
+        </button>
       </form>
 
-      <div className="inline-actions" role="group" aria-label="Changer de mode">
-        <button type="button" onClick={() => setMode("login")} aria-pressed={mode === "login"}>Connexion</button>
-        <button type="button" onClick={() => setMode("register")} aria-pressed={mode === "register"}>Inscription</button>
-        {token && (
-          <button type="button" onClick={() => onAuthChange("")}>
-            Se déconnecter
-          </button>
-        )}
+      <div className="inline-actions" style={{ marginTop: "0.75rem" }} role="group" aria-label="Changer de mode">
+        <button type="button" className="btn-ghost" onClick={() => setMode("login")} aria-pressed={mode === "login"}>Connexion</button>
+        <button type="button" className="btn-ghost" onClick={() => setMode("register")} aria-pressed={mode === "register"}>Inscription</button>
       </div>
-      {status && <p role="alert">{status}</p>}
+
+      {status && (
+        <p className={`status-bar ${status.type === "success" ? "success" : "error"}`} role="alert">
+          {status.msg}
+        </p>
+      )}
     </section>
   );
 }

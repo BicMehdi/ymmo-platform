@@ -60,7 +60,10 @@ export function LeadsPanel({ token, userRole }) {
     return (
       <section className="card">
         <h2>Demandes</h2>
-        <p>Connecte-toi pour voir les demandes.</p>
+        <div className="empty-state">
+          <div className="empty-state-icon">🔐</div>
+          <p>Connectez-vous pour voir les demandes.</p>
+        </div>
       </section>
     );
   }
@@ -69,28 +72,37 @@ export function LeadsPanel({ token, userRole }) {
     <section className="card">
       <h2>Demandes {canManage ? "agence" : "client"}</h2>
       {canManage && (
-        <div className="inline-actions">
-          <button type="button" onClick={() => setStatusFilter("")}>Toutes</button>
-          <button type="button" onClick={() => setStatusFilter("new")}>Nouvelles</button>
-          <button type="button" onClick={() => setStatusFilter("in_progress")}>En cours</button>
-          <button type="button" onClick={() => setStatusFilter("closed")}>Cloturees</button>
+        <div className="filter-tabs">
+          <button type="button" className={statusFilter === "" ? "active" : ""} onClick={() => setStatusFilter("")}>Toutes</button>
+          <button type="button" className={statusFilter === "new" ? "active" : ""} onClick={() => setStatusFilter("new")}>Nouvelles</button>
+          <button type="button" className={statusFilter === "in_progress" ? "active" : ""} onClick={() => setStatusFilter("in_progress")}>En cours</button>
+          <button type="button" className={statusFilter === "closed" ? "active" : ""} onClick={() => setStatusFilter("closed")}>Clôturées</button>
         </div>
       )}
 
       {leads.length === 0 ? (
-        <p>Aucune demande.</p>
+        <div className="empty-state">
+          <div className="empty-state-icon">📭</div>
+          <p>Aucune demande.</p>
+        </div>
       ) : (
         <ul className="property-list">
           {leads.map((lead) => (
-            <li key={lead.id}>
-              <h3>Demande #{lead.id}</h3>
-              <p>Bien: {lead.property_id}</p>
-              <p>Statut: {lead.status}</p>
-              <p>{lead.message}</p>
+            <li key={lead.id} className="lead-item">
+              <h3>Demande #{lead.id} — Bien #{lead.property_id}</h3>
+              <p style={{ fontSize: "0.82rem", color: "var(--text-soft)" }}>{lead.message}</p>
+              <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", marginTop: "0.25rem", flexWrap: "wrap" }}>
+                <span className={`badge ${
+                  lead.status === "new" ? "badge-primary" :
+                  lead.status === "in_progress" ? "badge-warning" : "badge-muted"
+                }`}>
+                  {lead.status === "new" ? "Nouvelle" : lead.status === "in_progress" ? "En cours" : "Clôturée"}
+                </span>
+              </div>
               {canManage && (
-                <div className="inline-actions">
-                  <button type="button" onClick={() => updateStatus(lead.id, "in_progress")}>Passer en cours</button>
-                  <button type="button" onClick={() => updateStatus(lead.id, "closed")}>Clore</button>
+                <div className="lead-actions">
+                  <button type="button" className="btn-ghost" onClick={() => updateStatus(lead.id, "in_progress")}>En cours</button>
+                  <button type="button" className="btn-ghost" onClick={() => updateStatus(lead.id, "closed")}>Clore</button>
                 </div>
               )}
             </li>

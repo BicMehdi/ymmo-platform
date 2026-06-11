@@ -17,7 +17,7 @@ import {
 
 const API_URL = "http://localhost:8000";
 
-const COLORS = ["#1d6b5d", "#2d9e8e", "#5bbfb0", "#94d4cc", "#c8eae6", "#e8a020", "#f0c060"];
+const COLORS = ["#2f5d3a", "#3d7a4e", "#5a9e6e", "#7fc095", "#a8d8b8", "#c48a00", "#e6b33a"];
 
 export function ChartsBox() {
   const [charts, setCharts] = useState(null);

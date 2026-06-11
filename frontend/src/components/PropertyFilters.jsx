@@ -79,7 +79,7 @@ export function PropertyFilters({ filters, setFilters, onApply }) {
           />
         </div>
       </div>
-      <button type="button" onClick={onApply}>Rechercher</button>
+      <button type="button" onClick={onApply} className="btn-primary" style={{ width: "100%" }}>Rechercher</button>
     </section>
   );
 }
