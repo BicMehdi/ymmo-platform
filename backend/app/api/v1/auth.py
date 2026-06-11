@@ -73,8 +73,8 @@ def me(user: User = Depends(get_current_user)) -> UserOut:
 
 @router.get("/users", response_model=list[UserOut])
 def list_users(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    """Liste tous les utilisateurs — admin uniquement."""
-    if user.role != "admin":
+    """Liste tous les utilisateurs — admin et super_admin."""
+    if user.role not in ("admin", "super_admin"):
         raise HTTPException(status_code=403, detail="Admin only")
     return db.scalars(select(User).order_by(User.id)).all()
 
@@ -86,16 +86,33 @@ def update_user_role(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Change le rôle d'un utilisateur — admin uniquement."""
-    if current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Admin only")
-    if role not in ("client", "agent", "admin"):
-        raise HTTPException(status_code=400, detail="Rôle invalide")
+    """
+    Règles de promotion :
+      - admin       : peut promouvoir client → agent (et rétrograder agent → client)
+      - super_admin : peut tout faire sauf modifier un autre super_admin
+    """
+    if current_user.role not in ("admin", "super_admin"):
+        raise HTTPException(status_code=403, detail="Insufficient permissions")
+
     target = db.scalar(select(User).where(User.id == user_id))
     if not target:
         raise HTTPException(status_code=404, detail="Utilisateur introuvable")
-    if target.role == "admin":
-        raise HTTPException(status_code=403, detail="Impossible de modifier le rôle d'un admin")
+
+    # Un super_admin ne peut pas être modifié par qui que ce soit (sauf lui-même)
+    if target.role == "super_admin" and current_user.id != target.id:
+        raise HTTPException(status_code=403, detail="Impossible de modifier un super_admin")
+
+    # Un admin ne peut pas se promouvoir lui-même ni toucher aux admins
+    if current_user.role == "admin":
+        if target.role in ("admin", "super_admin"):
+            raise HTTPException(status_code=403, detail="Un admin ne peut pas modifier un autre admin")
+        if role not in ("client", "agent"):
+            raise HTTPException(status_code=403, detail="Un admin ne peut promouvoir qu'en client ou agent")
+
+    # super_admin peut tout faire (sauf modifier un autre super_admin, déjà bloqué ci-dessus)
+    if role not in ("client", "agent", "admin", "super_admin"):
+        raise HTTPException(status_code=400, detail="Rôle invalide")
+
     target.role = role
     db.commit()
     db.refresh(target)

@@ -268,7 +268,7 @@ export function PropertyDetailPage({ propertyId, token, userRole, onBack, onNavi
           </section>
 
           {/* Admin : modifier / supprimer */}
-          {userRole === "admin" && (
+          {(userRole === "admin" || userRole === "super_admin") && (
             <section className="card detail-admin-card">
               <h2>⚙️ Administration</h2>
               <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>

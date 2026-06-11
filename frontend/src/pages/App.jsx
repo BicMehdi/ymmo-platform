@@ -96,7 +96,8 @@ export function App() {
   useEffect(() => { refreshAll(); }, []);
   useEffect(() => { loadCurrentUser(); loadFavorites(); }, [token]);
 
-  const isAgent = currentUser?.role === "agent" || currentUser?.role === "admin";
+  const isAgent = currentUser?.role === "agent" || currentUser?.role === "admin" || currentUser?.role === "super_admin";
+  const isAdmin = currentUser?.role === "admin" || currentUser?.role === "super_admin";
 
   /* ── Reservation page ── */
   if (reservingProperty !== null) {
@@ -230,9 +231,9 @@ export function App() {
         {/* Sidebar */}
         <aside className="app-sidebar">
           <AuthPanel token={token} onAuthChange={saveToken} />
-          {currentUser?.role === "admin" && <AdminPanel token={token} />}
-          {currentUser?.role === "admin" && <TransactionsPanel token={token} />}
-          {isAgent && <PropertyForm onCreated={refreshAll} token={token} />}
+          {isAdmin && <AdminPanel token={token} currentUserRole={currentUser?.role} />}
+          {isAdmin && <TransactionsPanel token={token} />}
+          {isAgent && <PropertyForm onCreated={refreshAll} token={token} />}}
           <AnalyticsBox overview={overview} onEstimate={estimatePrice} estimatedPrice={estimatedPrice} />
           <LeadsPanel token={token} userRole={currentUser?.role || null} />
         </aside>

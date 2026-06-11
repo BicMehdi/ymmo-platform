@@ -40,7 +40,7 @@ class PropertyOut(PropertyBase):
 class AuthRegister(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=64)
-    role: str = Field(default="client", pattern="^(admin|agent|client)$")
+    role: str = Field(default="client", pattern="^(admin|agent|client|super_admin)$")
 
 
 class AuthLogin(BaseModel):

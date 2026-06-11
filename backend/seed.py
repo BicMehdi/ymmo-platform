@@ -55,11 +55,11 @@ def seed() -> None:
             print("Base déjà seedée. Supprime ymmo.db pour recommencer.")
             return
 
-        # Admin principal
+        # Super Admin principal
         admin = User(
             email="admin@ymmo.fr",
             password_hash=hash_password("Admin123!"),
-            role="admin",
+            role="super_admin",
         )
         db.add(admin)
 
