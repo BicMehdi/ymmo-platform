@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 const API_URL = "http://localhost:8000";
 
@@ -152,8 +153,8 @@ export function AchatsPanel({ token }) {
         </p>
       )}
 
-      {/* ═══ MODAL DÉTAIL ═══ */}
-      {selected && (
+      {/* ═══ MODAL DÉTAIL — rendue dans document.body via Portal ═══ */}
+      {selected && createPortal(
         <div
           className="achat-modal-overlay"
           onClick={(e) => { if (e.target === e.currentTarget) setSelected(null); }}
@@ -294,7 +295,7 @@ export function AchatsPanel({ token }) {
             </div>
           </div>
         </div>
-      )}
+      , document.body)}
     </section>
   );
 }
