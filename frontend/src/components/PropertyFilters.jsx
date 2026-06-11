@@ -1,6 +1,6 @@
 import React from "react";
 
-export function PropertyFilters({ filters, setFilters, onApply }) {
+export function PropertyFilters({ filters, setFilters, onApply, isAgent }) {
   return (
     <section className="card" aria-label="Filtres de recherche">
       <h2>Filtres avancés</h2>
@@ -78,6 +78,22 @@ export function PropertyFilters({ filters, setFilters, onApply }) {
             min="1"
           />
         </div>
+        {isAgent && (
+          <div className="field">
+            <label htmlFor="f-status-filter">Statut</label>
+            <select
+              id="f-status-filter"
+              value={filters.status || "published"}
+              onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+            >
+              <option value="published">✅ Disponible uniquement</option>
+              <option value="reserved">⏳ Réservés</option>
+              <option value="sold">🔒 Vendus</option>
+              <option value="draft">📝 Brouillons</option>
+              <option value="all">💼 Tous les biens</option>
+            </select>
+          </div>
+        )}
       </div>
       <button type="button" onClick={onApply} className="btn-primary" style={{ width: "100%" }}>Rechercher</button>
     </section>

@@ -3,8 +3,7 @@ import React from "react";
 const STATUS_CONFIG = {
   published: { label: "À vendre",   cls: "badge-success" },
   draft:     { label: "Brouillon",  cls: "badge-muted"   },
-  sold:      { label: "Vendu",      cls: "badge-danger"  },
-};
+  sold:      { label: "Vendu",      cls: "badge-danger"  },  reserved:  { label: "R\u00e9serv\u00e9",    cls: "badge-warning" },};
 
 const TYPE_ICONS = {
   Appartement:       "🏢",

@@ -20,7 +20,7 @@ export function App() {
   const [estimatedPrice, setEstimatedPrice] = useState(null);
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
-  const [filters, setFilters] = useState({ city: "", property_type: "", min_price: "", max_price: "", min_area: "", max_area: "", rooms: "" });
+  const [filters, setFilters] = useState({ city: "", property_type: "", min_price: "", max_price: "", min_area: "", max_area: "", rooms: "", status: "published" });
   const [loadError, setLoadError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState(new Set());
@@ -239,7 +239,7 @@ export function App() {
 
         {/* Main */}
         <main className="app-main">
-          <PropertyFilters filters={filters} setFilters={setFilters} onApply={loadProperties} />
+          <PropertyFilters filters={filters} setFilters={setFilters} onApply={loadProperties} isAgent={isAgent} />
           <PropertyList properties={properties} onOpenDetail={setSelectedPropertyId} loading={loading} />
           <ChartsBox />
         </main>

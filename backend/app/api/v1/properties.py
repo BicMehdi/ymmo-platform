@@ -13,6 +13,7 @@ router = APIRouter(prefix="/properties", tags=["properties"])
 def list_properties(
     city: str | None = None,
     property_type: str | None = None,
+    status: str | None = Query(default="published"),
     min_price: float | None = Query(default=None, gt=0),
     max_price: float | None = Query(default=None, gt=0),
     min_area: float | None = Query(default=None, gt=0),
@@ -23,6 +24,10 @@ def list_properties(
     db: Session = Depends(get_db),
 ) -> list[Property]:
     query = select(Property)
+
+    # Filtre statut : "all" = tout voir (admin/agent), sinon filtre exact
+    if status and status != "all":
+        query = query.where(Property.status == status)
 
     if city:
         query = query.where(Property.city.ilike(f"%{city.strip()}%"))
