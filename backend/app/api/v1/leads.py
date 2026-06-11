@@ -14,8 +14,10 @@ router = APIRouter(prefix="/leads", tags=["leads"])
 def create_lead(
     payload: LeadCreate,
     db: Session = Depends(get_db),
-    user: User = Depends(require_roles("client")),
+    user: User = Depends(get_current_user),
 ) -> Lead:
+    if not user.is_active:
+        raise HTTPException(status_code=403, detail="Compte désactivé")
     property_item = db.get(Property, payload.property_id)
     if not property_item:
         raise HTTPException(status_code=404, detail="Property not found")
@@ -36,7 +38,7 @@ def create_lead(
 @router.get("/me", response_model=list[LeadOut])
 def list_my_leads(
     db: Session = Depends(get_db),
-    user: User = Depends(require_roles("client")),
+    user: User = Depends(get_current_user),
 ) -> list[Lead]:
     query = (
         select(Lead)
