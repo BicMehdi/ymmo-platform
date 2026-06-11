@@ -93,11 +93,14 @@ class Reservation(Base):
     property_id: Mapped[int] = mapped_column(ForeignKey("properties.id"), nullable=False, index=True)
     amount: Mapped[float] = mapped_column(Float, nullable=False)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending", index=True)
+    validated_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    validated_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
-    user: Mapped["User"] = relationship("User")
+    user: Mapped["User"] = relationship("User", foreign_keys=[user_id])
     property: Mapped["Property"] = relationship("Property")
     transaction: Mapped["Transaction | None"] = relationship("Transaction", back_populates="reservation", uselist=False)
+    validator: Mapped["User | None"] = relationship("User", foreign_keys=[validated_by])
 
 
 class Transaction(Base):

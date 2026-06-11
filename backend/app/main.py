@@ -30,6 +30,14 @@ with engine.connect() as conn:
     if "is_active" not in cols:
         conn.execute(text("ALTER TABLE users ADD COLUMN is_active INTEGER NOT NULL DEFAULT 1"))
         conn.commit()
+    # Ajouter validated_by et validated_at sur reservations si absents
+    res_cols = [row[1] for row in conn.execute(text("PRAGMA table_info(reservations)")).fetchall()]
+    if "validated_by" not in res_cols:
+        conn.execute(text("ALTER TABLE reservations ADD COLUMN validated_by INTEGER REFERENCES users(id)"))
+        conn.commit()
+    if "validated_at" not in res_cols:
+        conn.execute(text("ALTER TABLE reservations ADD COLUMN validated_at DATETIME"))
+        conn.commit()
 
 app.add_middleware(
     CORSMiddleware,

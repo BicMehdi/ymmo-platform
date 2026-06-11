@@ -141,6 +141,8 @@ class ReservationDetailOut(BaseModel):
     property_id: int
     amount: float
     status: str
+    validated_by: int | None = None
+    validated_at: datetime | None = None
     created_at: datetime
     user: "UserOut"
     property: "PropertyOut"

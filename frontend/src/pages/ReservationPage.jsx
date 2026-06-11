@@ -50,7 +50,7 @@ export function ReservationPage({ property, token, onBack, onSuccess }) {
         return;
       }
       setStep("success");
-      setTimeout(() => onSuccess && onSuccess(), 3000);
+      setTimeout(() => onSuccess && onSuccess(), 4000);
     } catch (_) {
       setErrorMsg("Erreur réseau. Veuillez réessayer.");
       setStep("error");
@@ -61,11 +61,11 @@ export function ReservationPage({ property, token, onBack, onSuccess }) {
   if (step === "success") {
     return (
       <div className="reservation-success">
-        <div className="reservation-success-icon">✅</div>
-        <h2>Réservation confirmée !</h2>
+        <div className="reservation-success-icon">⏳</div>
+        <h2>Demande envoyée !</h2>
         <p>Votre acompte de <strong>{amount.toLocaleString("fr-FR")} €</strong> a été enregistré.</p>
-        <p style={{ color: "var(--text-soft)", fontSize: "0.88rem" }}>Le bien <strong>{property.title}</strong> est maintenant marqué <span className="badge badge-warning">Réservé</span>.</p>
-        <p style={{ color: "var(--text-soft)", fontSize: "0.82rem", marginTop: "0.5rem" }}>Vous allez être redirigé automatiquement...</p>
+        <p style={{ color: "var(--text-soft)", fontSize: "0.88rem" }}>Votre demande pour <strong>{property.title}</strong> est <span className="badge badge-warning">En attente de validation</span>.</p>
+        <p style={{ color: "var(--text-soft)", fontSize: "0.82rem", marginTop: "0.5rem" }}>Un agent ou administrateur va examiner votre demande et vous contacter.</p>
         <button className="btn-primary" style={{ marginTop: "1rem" }} onClick={onBack}>← Retour aux biens</button>
       </div>
     );

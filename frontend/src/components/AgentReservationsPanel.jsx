@@ -3,11 +3,12 @@ import React, { useEffect, useState } from "react";
 const API_URL = "http://localhost:8000";
 
 const STATUS = {
-  confirmed: { label: "Confirmée",  cls: "badge-success" },
   pending:   { label: "En attente", cls: "badge-warning" },
+  accepted:  { label: "Acceptée",   cls: "badge-success" },
+  rejected:  { label: "Refusée",    cls: "badge-muted"   },
   cancelled: { label: "Annulée",    cls: "badge-muted"   },
-  refunded:  { label: "Remboursée", cls: "badge-primary" },
   sold:      { label: "Vendu",      cls: "badge-danger"  },
+  confirmed: { label: "Confirmée",  cls: "badge-success" },
 };
 
 const fmt = (n) =>
@@ -103,22 +104,31 @@ export function AgentReservationsPanel({ token }) {
                     <td style={{ fontSize: "0.78rem", color: "var(--text-soft)" }}>{fmtDate(r.created_at)}</td>
                     <td>
                       <div style={{ display: "flex", gap: "0.3rem", flexWrap: "wrap" }}>
-                        {r.status !== "confirmed" && r.status !== "sold" && r.status !== "cancelled" && (
-                          <button
-                            type="button"
-                            style={{ height: "26px", fontSize: "0.72rem", padding: "0 0.5rem", borderRadius: "6px", background: "#d4edda", color: "#155724", border: "1px solid #28a745", cursor: "pointer" }}
-                            onClick={() => updateStatus(r.id, "confirmed")}
-                          >
-                            ✅ Confirmer
-                          </button>
+                        {r.status === "pending" && (
+                          <>
+                            <button
+                              type="button"
+                              style={{ height: "26px", fontSize: "0.72rem", padding: "0 0.5rem", borderRadius: "6px", background: "#d4edda", color: "#155724", border: "1px solid #28a745", cursor: "pointer" }}
+                              onClick={() => updateStatus(r.id, "accepted")}
+                            >
+                              ✅ Accepter
+                            </button>
+                            <button
+                              type="button"
+                              style={{ height: "26px", fontSize: "0.72rem", padding: "0 0.5rem", borderRadius: "6px", background: "#f8d7da", color: "#721c24", border: "1px solid #f5c6cb", cursor: "pointer" }}
+                              onClick={() => updateStatus(r.id, "rejected")}
+                            >
+                              ✕ Refuser
+                            </button>
+                          </>
                         )}
-                        {r.status !== "sold" && r.status !== "cancelled" && (
+                        {r.status === "accepted" && (
                           <button
                             type="button"
                             style={{ height: "26px", fontSize: "0.72rem", padding: "0 0.5rem", borderRadius: "6px", background: "#fff3cd", color: "#856404", border: "1px solid #ffc107", cursor: "pointer" }}
                             onClick={() => updateStatus(r.id, "sold")}
                           >
-                            🏠 Vendu
+                            🏠 Marquer vendu
                           </button>
                         )}
                       </div>

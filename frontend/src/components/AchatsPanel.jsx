@@ -3,11 +3,14 @@ import React, { useEffect, useRef, useState } from "react";
 const API_URL = "http://localhost:8000";
 
 const STATUS = {
-  confirmed: { label: "Confirmée",   cls: "badge-success" },
   pending:   { label: "En attente",  cls: "badge-warning" },
+  accepted:  { label: "Acceptée",    cls: "badge-success" },
+  rejected:  { label: "Refusée",     cls: "badge-muted"   },
   cancelled: { label: "Annulée",     cls: "badge-muted"   },
-  refunded:  { label: "Remboursée",  cls: "badge-primary" },
   sold:      { label: "Vendu",       cls: "badge-danger"  },
+  // legacy
+  confirmed: { label: "Confirmée",   cls: "badge-success" },
+  refunded:  { label: "Remboursée",  cls: "badge-primary" },
 };
 
 const TX_STATUS = {
@@ -64,10 +67,10 @@ export function AchatsPanel({ token }) {
     setReservations((prev) => prev.map((r) => (r.id === resId ? updated : r)));
     setSelected(updated);
     const labels = {
-      sold:      "Bien marqué vendu ✅",
-      cancelled: "Réservation annulée",
-      refunded:  "Remboursement effectué",
-      confirmed: "Réservation confirmée ✅",
+      accepted:  "Demande acceptée ✅ — bien marqué réservé",
+      sold:      "Bien marqué vendu 🏠",
+      rejected:  "Demande refusée",
+      cancelled: "Annulation effectuée",
     };
     flash("success", labels[status] || status);
   };
@@ -252,16 +255,16 @@ export function AchatsPanel({ token }) {
 
             {/* Actions */}
             <div className="achat-modal-actions">
-              {selected.status !== "confirmed" && selected.status !== "sold" && selected.status !== "cancelled" && (
+              {selected.status !== "accepted" && selected.status !== "sold" && selected.status !== "rejected" && selected.status !== "cancelled" && (
                 <button
                   className="btn-primary"
                   style={{ fontSize: "0.82rem", height: "34px", background: "var(--primary)" }}
-                  onClick={() => updateStatus(selected.id, "confirmed")}
+                  onClick={() => updateStatus(selected.id, "accepted")}
                 >
-                  ✅ Valider la réservation
+                  ✅ Accepter la demande
                 </button>
               )}
-              {selected.status !== "sold" && selected.status !== "cancelled" && (
+              {selected.status !== "sold" && selected.status !== "rejected" && selected.status !== "cancelled" && (
                 <button
                   className="btn-primary"
                   style={{ fontSize: "0.82rem", height: "34px", background: "var(--success)" }}
@@ -270,22 +273,22 @@ export function AchatsPanel({ token }) {
                   🏠 Marquer vendu
                 </button>
               )}
-              {selected.status === "confirmed" && (
+              {selected.status === "pending" && (
                 <button
                   className="btn-ghost"
                   style={{ fontSize: "0.82rem", height: "34px" }}
-                  onClick={() => updateStatus(selected.id, "refunded")}
+                  onClick={() => updateStatus(selected.id, "rejected")}
                 >
-                  ↩ Rembourser
+                  ✕ Refuser
                 </button>
               )}
-              {selected.status !== "cancelled" && selected.status !== "sold" && (
+              {(selected.status === "pending" || selected.status === "accepted") && (
                 <button
                   className="btn-primary"
                   style={{ fontSize: "0.82rem", height: "34px", background: "var(--danger)" }}
                   onClick={() => updateStatus(selected.id, "cancelled")}
                 >
-                  ✕ Annuler
+                  🗑 Annuler
                 </button>
               )}
             </div>

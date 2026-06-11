@@ -3,11 +3,13 @@ import React, { useEffect, useState } from "react";
 const API_URL = "http://localhost:8000";
 
 const STATUS = {
-  confirmed: { label: "Confirmée",  cls: "badge-success", icon: "✅" },
-  pending:   { label: "En attente", cls: "badge-warning",  icon: "⏳" },
-  cancelled: { label: "Annulée",    cls: "badge-muted",    icon: "✕"  },
-  refunded:  { label: "Remboursée", cls: "badge-primary",  icon: "↩"  },
-  sold:      { label: "Vendu",      cls: "badge-danger",   icon: "🏠" },
+  pending:   { label: "En attente",       cls: "badge-warning",  icon: "⏳" },
+  accepted:  { label: "Acceptée",         cls: "badge-success",  icon: "✅" },
+  rejected:  { label: "Refusée",          cls: "badge-muted",    icon: "✕"  },
+  cancelled: { label: "Annulée",          cls: "badge-muted",    icon: "✕"  },
+  sold:      { label: "Vendu",            cls: "badge-danger",   icon: "🏠" },
+  // legacy
+  confirmed: { label: "Confirmée",        cls: "badge-success",  icon: "✅" },
 };
 
 const fmt = (n) =>
