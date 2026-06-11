@@ -59,6 +59,8 @@ export function App() {
     setCurrentUser(data);
   };
 
+  const [loadError, setLoadError] = useState(false);
+
   const loadProperties = async () => {
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
@@ -68,17 +70,24 @@ export function App() {
     });
 
     const query = params.toString();
-    const response = await fetch(
-      `${API_URL}/api/v1/properties${query ? `?${query}` : ""}`
-    );
-    const data = await response.json();
-    setProperties(data);
+    try {
+      const response = await fetch(
+        `${API_URL}/api/v1/properties${query ? `?${query}` : ""}`
+      );
+      const data = await response.json();
+      setProperties(data);
+      setLoadError(false);
+    } catch (_) {
+      setLoadError(true);
+    }
   };
 
   const loadOverview = async () => {
-    const response = await fetch(`${API_URL}/api/v1/analytics/overview`);
-    const data = await response.json();
-    setOverview(data);
+    try {
+      const response = await fetch(`${API_URL}/api/v1/analytics/overview`);
+      const data = await response.json();
+      setOverview(data);
+    } catch (_) {}
   };
 
   const estimatePrice = async (payload) => {
@@ -125,6 +134,14 @@ export function App() {
       <header className="hero">
         <h1>Ymmo DEV</h1>
         <p>Plateforme MVP achat/vente et aide a la decision</p>
+        {loadError && (
+          <p role="alert" style={{ color: "#c0392b", fontSize: "0.9rem" }}>
+            Connexion au serveur impossible.{" "}
+            <button type="button" onClick={refreshAll} style={{ textDecoration: "underline", background: "none", border: "none", color: "inherit", cursor: "pointer" }}>
+              Réessayer
+            </button>
+          </p>
+        )}
       </header>
 
       <div className="grid">

@@ -13,8 +13,8 @@ from datetime import datetime, timedelta
 import random
 
 from app.core.security import hash_password
-from app.db import SessionLocal
-from app.models.db_models import Property, User
+from app.db import Base, SessionLocal, engine
+from app.models.db_models import Property, User  # noqa: F401 (registers models)
 
 CITIES = [
     "Paris", "Lyon", "Marseille", "Bordeaux", "Nice",
@@ -48,6 +48,7 @@ PROPERTIES_DATA = [
 
 
 def seed() -> None:
+    Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
         if db.query(User).count() > 0:
