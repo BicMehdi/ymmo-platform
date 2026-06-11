@@ -1098,6 +1098,105 @@ input::placeholder { color: var(--text-soft); opacity: 0.7; }
 }
 
 /* ═══════════════════════════════════════
+   RESERVATION PAGE
+═══════════════════════════════════════ */
+.reservation-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.reservation-layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: var(--gap);
+  align-items: start;
+}
+
+.reservation-summary h2 { margin-bottom: 0.75rem; }
+.res-property-title { font-family: 'Poppins', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text); }
+.res-property-price { font-family: 'Poppins', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-bottom: 0.25rem; }
+.res-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-soft); margin-bottom: 0.5rem; font-weight: 600; }
+.res-amount-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface-muted);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+}
+.res-amount-display strong { font-size: 1.1rem; color: var(--primary); font-weight: 800; }
+
+.selected-deposit {
+  border-color: var(--primary) !important;
+  background: rgba(47,93,58,0.08) !important;
+  color: var(--primary) !important;
+}
+
+.reservation-form-wrap h2 { margin-bottom: 0.25rem; }
+.reservation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+.card-number-wrap {
+  position: relative;
+}
+.card-number-wrap input { padding-right: 2.5rem; }
+.card-brand-icon {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  pointer-events: none;
+}
+.reservation-pay-btn {
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 14px;
+  margin-top: 0.25rem;
+}
+.reservation-pay-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.reservation-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 0.75rem;
+  text-align: center;
+  padding: 2rem;
+}
+.reservation-success-icon { font-size: 4rem; }
+.reservation-success h2 { font-family: 'Poppins', sans-serif; font-size: 1.6rem; }
+
+/* Transactions panel */
+.transactions-list { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem; }
+.transaction-item {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+  background: var(--surface-muted);
+}
+.tx-header { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+.tx-id { font-weight: 700; font-size: 0.85rem; margin-right: 0.5rem; color: var(--text-soft); }
+.tx-date { font-size: 0.78rem; color: var(--text-soft); }
+.tx-details { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 0.5rem; margin-bottom: 0.6rem; }
+.tx-details > div { display: flex; flex-direction: column; gap: 0.1rem; }
+.tx-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-soft); letter-spacing: 0.04em; }
+.tx-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; padding-top: 0.5rem; border-top: 1px solid var(--border); }
+
+@media (max-width: 860px) {
+  .reservation-layout { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════════ */
 @media (max-width: 1024px) {

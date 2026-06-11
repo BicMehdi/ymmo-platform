@@ -46,7 +46,6 @@ class Property(Base):
     owner: Mapped[User] = relationship("User", back_populates="properties")
     leads: Mapped[list["Lead"]] = relationship("Lead", back_populates="property")
     favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="property", cascade="all, delete-orphan")
-    favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="property", cascade="all, delete-orphan")
 
 
 class Lead(Base):
@@ -83,3 +82,35 @@ class Favorite(Base):
 
     user: Mapped["User"] = relationship("User")
     property: Mapped["Property"] = relationship("Property", back_populates="favorites")
+
+
+class Reservation(Base):
+    __tablename__ = "reservations"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
+    property_id: Mapped[int] = mapped_column(ForeignKey("properties.id"), nullable=False, index=True)
+    amount: Mapped[float] = mapped_column(Float, nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending", index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    user: Mapped["User"] = relationship("User")
+    property: Mapped["Property"] = relationship("Property")
+    transaction: Mapped["Transaction | None"] = relationship("Transaction", back_populates="reservation", uselist=False)
+
+
+class Transaction(Base):
+    __tablename__ = "transactions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    reservation_id: Mapped[int] = mapped_column(ForeignKey("reservations.id"), nullable=False, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
+    property_id: Mapped[int] = mapped_column(ForeignKey("properties.id"), nullable=False, index=True)
+    amount: Mapped[float] = mapped_column(Float, nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="paid", index=True)
+    payment_method: Mapped[str] = mapped_column(String(30), nullable=False, default="card")
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    reservation: Mapped["Reservation"] = relationship("Reservation", back_populates="transaction")
+    user: Mapped["User"] = relationship("User")
+    property: Mapped["Property"] = relationship("Property")

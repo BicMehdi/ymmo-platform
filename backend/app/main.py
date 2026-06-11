@@ -7,8 +7,9 @@ from app.api.v1.auth import router as auth_router
 from app.api.v1.favorites import router as favorites_router
 from app.api.v1.leads import router as leads_router
 from app.api.v1.properties import router as properties_router
+from app.api.v1.reservations import router as reservations_router
 from app.db import Base, engine, get_db
-from app.models.db_models import Favorite, Lead, Property, User  # noqa: F401
+from app.models.db_models import Favorite, Lead, Property, Reservation, Transaction, User  # noqa: F401
 from app.models.schemas import PriceEstimateInput, PriceEstimateOutput
 from app.services.analytics import (
     avg_price_by_city,
@@ -35,6 +36,7 @@ app.include_router(properties_router, prefix="/api/v1")
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(leads_router, prefix="/api/v1")
 app.include_router(favorites_router, prefix="/api/v1")
+app.include_router(reservations_router, prefix="/api/v1")
 
 
 @app.get("/api/v1/analytics/overview")

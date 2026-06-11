@@ -74,7 +74,7 @@ function SimilarCard({ item, onNavigate }) {
 }
 
 /* ── Page principale ─────────────────────────────────────────── */
-export function PropertyDetailPage({ propertyId, token, userRole, onBack, onNavigate, favoriteIds = new Set(), onToggleFavorite }) {
+export function PropertyDetailPage({ propertyId, token, userRole, onBack, onNavigate, favoriteIds = new Set(), onToggleFavorite, onReserve }) {
   const [property, setProperty]     = useState(null);
   const [loading, setLoading]       = useState(true);
   const [activeImg, setActiveImg]   = useState(0);
@@ -339,9 +339,24 @@ export function PropertyDetailPage({ propertyId, token, userRole, onBack, onNavi
               >
                 {isFavorite ? "❤️ Dans mes favoris" : "🤍 Ajouter aux favoris"}
               </button>
+              {property.status === "published" && (
+                <button
+                  type="button"
+                  className="btn-primary detail-action-btn"
+                  style={{ background: "var(--primary)", fontWeight: 700 }}
+                  onClick={() => onReserve && onReserve(property)}
+                >
+                  🏠 Réserver ce bien
+                </button>
+              )}
+              {property.status === "reserved" && (
+                <div className="detail-action-btn" style={{ textAlign: "center", background: "#fff3cd", borderRadius: "12px", padding: "0.75rem", fontSize: "0.88rem", color: "#856404", border: "1px solid #ffc107" }}>
+                  ⏳ Bien déjà réservé
+                </div>
+              )}
               <button
                 type="button"
-                className="btn-primary detail-action-btn"
+                className="btn-secondary detail-action-btn"
                 onClick={() => { setShowLeadForm(!showLeadForm); setLeadStatus(null); }}
               >
                 📅 Demander une visite

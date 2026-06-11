@@ -7,7 +7,9 @@ import { LeadsPanel } from "../components/LeadsPanel";
 import { PropertyFilters } from "../components/PropertyFilters";
 import { PropertyForm } from "../components/PropertyForm";
 import { PropertyList } from "../components/PropertyList";
+import { TransactionsPanel } from "../components/TransactionsPanel";
 import { PropertyDetailPage } from "./PropertyDetailPage";
+import { ReservationPage } from "./ReservationPage";
 
 const API_URL = "http://localhost:8000";
 
@@ -22,6 +24,7 @@ export function App() {
   const [loadError, setLoadError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState(new Set());
+  const [reservingProperty, setReservingProperty] = useState(null);
 
   const saveToken = (value) => {
     setToken(value);
@@ -95,6 +98,34 @@ export function App() {
 
   const isAgent = currentUser?.role === "agent" || currentUser?.role === "admin";
 
+  /* ── Reservation page ── */
+  if (reservingProperty !== null) {
+    return (
+      <>
+        <header className="app-header">
+          <div className="app-header-inner">
+            <div className="app-logo"><span className="app-logo-icon">🏡</span><span>Ym<em>mo</em></span></div>
+            <nav className="app-nav">
+              <button className="btn-ghost" onClick={() => setReservingProperty(null)}>← Retour</button>
+            </nav>
+          </div>
+        </header>
+        <div className="detail-layout">
+          <ReservationPage
+            property={reservingProperty}
+            token={token}
+            onBack={() => setReservingProperty(null)}
+            onSuccess={() => {
+              setReservingProperty(null);
+              setSelectedPropertyId(null);
+              refreshAll();
+            }}
+          />
+        </div>
+      </>
+    );
+ }
+
   /* ── Detail page ── */
   if (selectedPropertyId !== null) {
     return (
@@ -120,6 +151,7 @@ export function App() {
             onNavigate={(id) => setSelectedPropertyId(id)}
             favoriteIds={favoriteIds}
             onToggleFavorite={toggleFavorite}
+            onReserve={(prop) => setReservingProperty(prop)}
           />
         </div>
       </>
@@ -199,6 +231,7 @@ export function App() {
         <aside className="app-sidebar">
           <AuthPanel token={token} onAuthChange={saveToken} />
           {currentUser?.role === "admin" && <AdminPanel token={token} />}
+          {currentUser?.role === "admin" && <TransactionsPanel token={token} />}
           {isAgent && <PropertyForm onCreated={refreshAll} token={token} />}
           <AnalyticsBox overview={overview} onEstimate={estimatePrice} estimatedPrice={estimatedPrice} />
           <LeadsPanel token={token} userRole={currentUser?.role || null} />

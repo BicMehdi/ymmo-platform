@@ -24,7 +24,7 @@ class PropertyUpdate(BaseModel):
     property_type: str | None = Field(default=None, min_length=2, max_length=50)
     description: str | None = Field(default=None, max_length=1000)
     rooms: int | None = Field(default=None, ge=1)
-    status: str | None = Field(default=None, pattern="^(draft|published|sold)$")
+    status: str | None = Field(default=None, pattern="^(draft|published|sold|reserved)$")
 
 
 class PropertyOut(PropertyBase):
@@ -97,6 +97,36 @@ class PriceEstimateInput(BaseModel):
     city: str
     area_m2: float = Field(gt=0)
     rooms: int = Field(ge=1)
+
+
+class ReservationCreate(BaseModel):
+    property_id: int = Field(gt=0)
+    amount: float = Field(gt=0)
+
+
+class TransactionOut(BaseModel):
+    id: int
+    reservation_id: int
+    user_id: int
+    property_id: int
+    amount: float
+    status: str
+    payment_method: str
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class ReservationOut(BaseModel):
+    id: int
+    user_id: int
+    property_id: int
+    amount: float
+    status: str
+    created_at: datetime
+    transaction: TransactionOut | None = None
+
+    model_config = {"from_attributes": True}
 
 
 class PriceEstimateOutput(BaseModel):
