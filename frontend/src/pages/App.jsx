@@ -64,6 +64,11 @@ export function App() {
   const loadProperties = async () => {
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([k, v]) => { if (v !== "") params.set(k, v); });
+    // L'agent ne voit que ses propres biens
+    if (currentUser?.role === "agent" && currentUser?.id) {
+      params.set("owner_user_id", currentUser.id);
+      if (!params.has("status")) params.set("status", "all");
+    }
     const q = params.toString();
     try {
       const res = await fetch(`${API_URL}/api/v1/properties${q ? `?${q}` : ""}`);
@@ -97,6 +102,8 @@ export function App() {
 
   useEffect(() => { refreshAll(); }, []);
   useEffect(() => { loadCurrentUser(); loadFavorites(); }, [token]);
+  // Recharger les biens quand le user change (l'agent doit voir seulement les siens)
+  useEffect(() => { if (currentUser !== null) loadProperties(); }, [currentUser]);
 
   const isAgent = currentUser?.role === "agent" || currentUser?.role === "admin" || currentUser?.role === "super_admin";
   const isAdmin = currentUser?.role === "admin" || currentUser?.role === "super_admin";

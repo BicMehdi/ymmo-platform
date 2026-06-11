@@ -14,6 +14,7 @@ def list_properties(
     city: str | None = None,
     property_type: str | None = None,
     status: str | None = Query(default="published"),
+    owner_user_id: int | None = Query(default=None),
     min_price: float | None = Query(default=None, gt=0),
     max_price: float | None = Query(default=None, gt=0),
     min_area: float | None = Query(default=None, gt=0),
@@ -28,6 +29,9 @@ def list_properties(
     # Filtre statut : "all" = tout voir (admin/agent), sinon filtre exact
     if status and status != "all":
         query = query.where(Property.status == status)
+
+    if owner_user_id is not None:
+        query = query.where(Property.owner_user_id == owner_user_id)
 
     if city:
         query = query.where(Property.city.ilike(f"%{city.strip()}%"))
